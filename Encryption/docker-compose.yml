@@ -7,3 +7,4 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
+    command: ["sh"]
