@@ -8,4 +8,4 @@ docker push farhansajid2/django-k8s-app:$SHA
 
 # applying kubectl configs
 kubectl apply -f k8s
-kubectl set image deployment/app-deployment app=farhansajid2/django-app-k8s:$SHA
+kubectl set image deployment/app-deployment app=farhansajid2/django-k8s-app:$SHA
