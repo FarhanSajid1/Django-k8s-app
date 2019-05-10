@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: app
+
+  template:
+    metadata:
+      labels:
+        component: app
+
+    spec:
+      containers:
+        - name: app
+          image: farhansajid2/django-k8s-app
+          ports:
+            - containerPort: 8990
+          args: [
+  				"gunicorn",
+  				"-w",
+  				"4",
+  				"-b",
+  				"0.0.0.0:8990",
+  				"django_project.wsgi",
+  				"--env",
+  				"DJANGO_SETTINGS_MODULE=django_project.settings.production"
+
+			]
+          env:
+            - name: PGUSER
+              value: postgres
+            - name: REDIS_HOST
+              value: django-redis-cluster-ip
+            - name: PGDATABASE
+              value: postgres
+            - name: PGHOST
+              value: django-postgres-cluster-ip
+            - name: PGPORT
+              value: "5432"
+            - name: GOOGLE_USER
+              value: farhanking7864
+            # - name: USE_S3
+            #   value: "True"
+            - name: SECRET_KEY
+              value: afoiajsfoija84284uijskflkamlfkmaskfjaofjoa
+            - name: DJANGO_SETTINGS_MODULE
+              value: django_project.settings.production
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: awssecretaccesskeyid
+                  key: AWS_SECRET_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: awssecretkey
+                  key: AWS_SECRET_ACCESS_KEY
+
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bucketname
+                  key: AWS_STORAGE_BUCKET_NAME
+
+            - name: GOOGLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: googlepassword
+                  key: GOOGLE_PASSWORD
+
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

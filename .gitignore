@@ -1,0 +1,4 @@
+postgres_credentials
+Dockerrun.aws.json1
+db.sqlite3
+.DS_Store

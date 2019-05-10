@@ -1,0 +1,42 @@
+variable "project_name" {
+  default = "django-k8s"
+}
+variable "region" {
+  default = "us-east-1"
+}
+
+provider "google" {
+  credentials = "${file("credentials.json")}"
+  region = "${var.region}"
+}
+
+resource "random_id" "id" {
+  byte_length = 4
+  prefix = "${var.project_name}-"
+
+}
+
+
+resource "google_project" "django" {
+
+  name = "django"
+  project_id = "${random_id.id.hex}" # this is the project id from random_id
+  depends_on = ["random_id.id"]
+}
+
+resource "google_project_services" "project" {
+  project = "django"
+  services = [
+  "compute.googleapis.com"
+  ]
+}
+
+resource "google_container_cluster" "k8s" {
+  name = "django-cluster"
+  location = "us-east-1"
+
+  initial_node_count = 3
+
+  depends_on = ["google_project.django"]
+
+}
