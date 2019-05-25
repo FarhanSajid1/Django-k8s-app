@@ -13,6 +13,9 @@ env:
       # this prevents any interactions with the Gcloud
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
+notifications:
+  slack: kpacademy:EgN7sVj1SL6pDORdKLgH46a4
+
 before_install:
   # setting up json credentials for google cloud
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in credentials.json.enc -out credentials.json -d
