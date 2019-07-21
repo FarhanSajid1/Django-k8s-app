@@ -60,6 +60,25 @@ When we are scaling our application, not neccessarily this application, but when
 # CI/CD
 CI/CD standard for continous integration/continous delivery, we want to automate our build processes as well as delivery/deployment depending on our environment. Everytime a developer makes a commit to a particular branch, namely the Master branch, we want to kick off a build/Deploy pipeline. Because we want to ensure that only good code is merged, we develop and push or a feature branch, request a merge, allow TravisCI, our CI/CD tool to do the rest namely, run integration tests, build the docker images, Imperatively update our kubernetes manifest container tags, and push to Google Kubernetes Engine. 
 
+``` 
+# logging into docker/ using TravisCI environment variables
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+  # building our test environment
+  - docker build -t farhansajid2/django-test -f ./docker/dev/Dockerfile.dev .
+
+script:
+  - docker run farhansajid2/django-test python manage.py test
+
+# deploy script to update images
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
+
+```
+
 # TravisCI and imperatively changing the image Tags
 TravisCI is a free CI/CD tool used to make our lives easier, we are going to test, build, and change our image tags. The reason for this is because in Kubernetes if we leave the tag as :latest Kubernetes does not notice that the manifest has changed 
 For example
@@ -92,3 +111,27 @@ kubectl set image deployment/app-deployment app=farhansajid2/django-k8s-app:$SHA
 ```
 kubectl set <attribute_to_change> <deployment>/<deployment_name> <pod_selector>=<new_image_tag>
  
+
+# Application Specifics
+
+## Environment Variables
+All the environment variables are found inside the django-app-deployment.yml, requirements include an S3 bucket, GMAIL account. Other than that you just need to create postgres as well as Redis
+
+## Ingress-Nginx
+We do not create a specific nginx pod, we are going to rely on the [Ingress-Nginx] (https://github.com/kubernetes/ingress-nginx), the reason is that we do not want to write these nginx files, the community lead project handles all of this for us, we can just add TLS support through annotations and the rest is pretty straight forward. See the ingress.yml file for examples on how to add routing rules. We can also specify a host once you purchase a domain-name. 
+
+## Helm and Tiller Setup
+To install packages such as Datadog for monitoring or Ingress-Nginx, we will be implementing helm. Helm is a package manager for Kubernetes and it makes it easy to install application through charts. To install Helm we simply follow the [guide here](https://helm.sh/docs/using_helm/#installing-helm) afterward we need to give tiller, the client pod which carries changes to the cluster permission. On GKE, pods do not have the permission to make changes to the cluster, we need to give explicit permission beforehand. 
+
+``` 
+ kubectl create serviceaccount --namespace kube-system tiller
+ kubectl create clusterrolebinding tiler-cluster-rule --clusterole=cluster-admin --serviceaccount=kube-system:tiller
+
+```
+
+First we create a service account, which is an account for pods to administer the cluster, then we want to give clusterrolebinding, which are privileges to make changes to the entire cluster. 
+Once this is done we simply run 
+``` 
+ helm init --service-account tiller --upgrade
+```
+This sets up helm and tiller, and now you can install third party software.
