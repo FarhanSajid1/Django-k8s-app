@@ -8,13 +8,14 @@ Corey Schafer on YouTube. The blog application includes posts with CRUD operatio
 Authentication. We then dockerize the application and run the application on Kubernetes!
 
 ## Environment 
- ```                                                                                    __ _ _ _
-  - - - - -         - - - - -   - -                - - - - -  | - - - - - - - - - - - - -| PVC   |
- | Google | - - - | Ingress- Nginx | - - -| Ser  | Django    | - - - - | Postgres |- - -|_ _ _ _|
- |  LB    |       |                |      | vice | App       |        |_ _ _ _ _ |
- |        | - - - |                | - - -|      | Deployment| - - -|  Redis Pod  
-  --- - - -         - - - - - - - -               - - - - - - - - - |
- ````
+ ```                                                                                      __ _ _ _
+  - - - - -         - - - - -   - -              |  - - - - -  | - - - - - - - - - - - - -| PVC   |
+ | Google | - - - | Ingress- Nginx | - - -| Ser  | Django      | - - - - | Postgres |- - -|_ _ _ _|
+ |  LB    |       |                |      | vice | App         |         |_ _ _ _ _ |
+ |        | - - - |                | - - -|      | Deployment  | - - - |            |
+  --- - - -         - - - - - - - -               - - - - - - - - -  - |  Redis Pod |
+                                                                       | ___________|
+````
 
 
 # Application Settings
