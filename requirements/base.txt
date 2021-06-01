@@ -6,7 +6,7 @@ idna==2.7
 Pillow
 pytz==2018.5
 requests==2.19.1
-urllib3==1.23
+urllib3==1.26.5
 psycopg2
 boto3
 django-storages
